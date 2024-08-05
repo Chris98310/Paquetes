@@ -30,6 +30,9 @@ jobs:
         run: dotnet pack --configuration Release --output ./nupkgs
         working-directory: ./SolucionSeguridad/Autorizacion.Middleware
 
+      - name: List Packaged Files
+        run: ls -R ./nupkgs
+
       - name: Upload NuGet Packages
         uses: actions/upload-artifact@v3
         with:
@@ -49,7 +52,7 @@ jobs:
         with:
           name: nupkgs
 
-      - name: List Files
+      - name: List Downloaded Files
         run: ls -R ./nupkgs
 
       - name: Add NuGet Source
