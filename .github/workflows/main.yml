@@ -26,6 +26,9 @@ jobs:
       run: dotnet pack --configuration Release --output ./nupkgs
       working-directory: ./SolucionSeguridad/Autorizacion.Middleware
       
+    - name: List Packed Files
+      run: ls -R ./nupkgs
+
     - uses: actions/upload-artifact@v3
       with:
         name: Autorizacion.Middleware
@@ -39,13 +42,13 @@ jobs:
     steps:
     - name: Checkout 
       uses: actions/checkout@v3
-    
+     
     - name: Download Artifacts 
       uses: actions/download-artifact@v3
       with:
         name: Autorizacion.Middleware
     
-    - name: List Files
+    - name: List Downloaded Files
       run: ls -R ./nupkgs
       
     - name: Prep packages
