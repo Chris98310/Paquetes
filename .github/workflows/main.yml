@@ -11,52 +11,42 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 8.0.x
-
-      - name: Restore dependencies
-        run: dotnet restore
-        working-directory: ./SolucionSeguridad/Autorizacion.Middleware
-
-      - name: Build
-        run: dotnet build --configuration Release --no-restore
-        working-directory: ./SolucionSeguridad/Autorizacion.Middleware
-
-      - name: Pack
-        run: dotnet pack --configuration Release --output ./nupkgs
-        working-directory: ./SolucionSeguridad/Autorizacion.Middleware
-
-      - name: List Packaged Files
-        run: ls -R ./nupkgs
-
-      - name: Upload NuGet Packages
-        uses: actions/upload-artifact@v3
-        with:
-          name: nupkgs
-          path: ./nupkgs/*.nupkg
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+      working-directory: ./SolucionSeguridad/Autorizacion.Middleware
+    - name: Build
+      run: dotnet build --no-restore
+      working-directory: ./SolucionSeguridad/Autorizacion.Middleware
+    - name: Pack      
+      run: dotnet pack --configuration Release
+      working-directory: ./SolucionSeguridad/Autorizacion.Middleware
+      
+    - uses: actions/upload-artifact@v3
+      with:
+        name: Autorizacion.Abstracciones
+        if-no-files-found: error
+        retention-days: 7
+        path: ./AutorizacionMiddleware/Autorizacion.Abstracciones/bin/Release/*.nupkg
 
   release:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest    
     needs: build
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Download NuGet Packages
-        uses: actions/download-artifact@v3
-        with:
-          name: nupkgs
-
-      - name: List Downloaded Files
-        run: ls -R ./nupkgs
-
-      - name: Add NuGet Source
-        run: dotnet nuget add source --username Chris98310 --password ${{ secrets.Paquetes_Token }} --store-password-in-clear-text --name paquetes "https://nuget.pkg.github.com/Chris98310/index.json"
-
-      - name: Push NuGet Packages to GitHub Packages
-        run: dotnet nuget push ./nupkgs/*.nupkg --api-key ${{ secrets.Paquetes_Token }} --source "paquetes" --skip-duplicate
+    steps:  
+    - name: Checkout 
+      uses: actions/checkout@v3
+    
+    - name: Download Artifacts 
+      uses: actions/download-artifact@v3
+    
+    - name: List Files
+      run: ls -R
+      
+    - name: Prep packages
+      run: dotnet nuget add source --username Chris98310 --password ${{ secrets.Paquetes_Token }} --store-password-in-clear-text --name paquetes "https://nuget.pkg.github.com/Chris98310/index.json"
+    - name: Push package to GitHub packages 
+      run: dotnet nuget push ./AutorizacionMiddleware/Autorizacion.Abstracciones/bin/Release/*.nupkg --api-key ${{ secrets.Paquetes_Token }}  --source "paquetes" --skip-duplicate
