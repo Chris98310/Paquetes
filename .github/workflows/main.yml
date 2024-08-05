@@ -27,7 +27,9 @@ jobs:
       working-directory: ./SolucionSeguridad/Autorizacion.Middleware
 
     - name: Pack
-      run: dotnet pack --configuration Debug --output ./nupkgs
+      run: |
+        mkdir -p ./nupkgs
+        dotnet pack --configuration Debug --output ./nupkgs
       working-directory: ./SolucionSeguridad/Autorizacion.Middleware
 
     - name: List Files in nupkgs
