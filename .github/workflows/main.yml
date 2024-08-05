@@ -33,7 +33,7 @@ jobs:
       run: dotnet pack --configuration Release --output ./nupkgs
       working-directory: ./SolucionSeguridad/Autorizacion.Middleware
 
-    - name: List Packed Files
+    - name: List Files in nupkgs
       run: ls -R ./nupkgs
 
     - uses: actions/upload-artifact@v3
@@ -61,5 +61,7 @@ jobs:
     - name: Prep packages
       run: dotnet nuget add source --username Chris98310 --password ${{ secrets.PAQUETES_TOKEN }} --store-password-in-clear-text --name paquetes "https://nuget.pkg.github.com/Chris98310/index.json"
 
+    - name: Push package to GitHub packages 
+      run: dotnet nuget push ./nupkgs/*.nupkg --api-key ${{ secrets.PAQUETES_TOKEN }} --source "paquetes" --skip-duplicate
     - name: Push package to GitHub packages 
       run: dotnet nuget push ./nupkgs/*.nupkg --api-key ${{ secrets.PAQUETES_TOKEN }} --source "paquetes" --skip-duplicate
